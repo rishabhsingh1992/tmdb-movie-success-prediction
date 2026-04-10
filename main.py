@@ -58,7 +58,7 @@ y_pred = model_pipeline.predict(X_test)
 # print(confusion_matrix(y_test, y_pred))
 # print(classification_report(y_test, y_pred))
 
-joblib.dump(model_pipeline, "models/movie_success_classification_model.pkl")
+joblib.dump(model_pipeline, "models/movie_success_classification_model_pipeline.pkl")
 # joblib.dump(
 #     model_pipeline.named_steps["scaler"], "models/movie_success_classification_scaler.pkl"
 # )

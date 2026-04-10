@@ -12,16 +12,20 @@ class Movie(BaseModel):
     runtime: float
 
 
-model = joblib.load("models/movie_success_classification_model.pkl")
-scaler = joblib.load("models/movie_success_classification_scaler.pkl")
+# model = joblib.load("models/movie_success_classification_model.pkl")
+# scaler = joblib.load("models/movie_success_classification_scaler.pkl")
+
+model = joblib.load("models/movie_success_classification_model_pipeline.pkl")
 
 
 @app.post("/predict")
 def predict_movie_success(movie: Movie):
     input_data = [[movie.budget, movie.popularity, movie.runtime]]
 
-    input_scaled = scaler.transform(input_data)
+    # input_scaled = scaler.transform(input_data)
 
-    prediction = model.predict(input_scaled)
+    # prediction = model.predict(input_scaled)
+
+    prediction = model.predict(input_data)
 
     return {"is_successful": bool(prediction[0])}
