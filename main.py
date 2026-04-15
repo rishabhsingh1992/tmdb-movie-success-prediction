@@ -1,64 +1,15 @@
-import numpy as np
-import pandas as pd
+from src.data import load_data
+from src.features import build_features
+from src.model import evaluate_model, save_model, split_data, train_model
 
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LogisticRegression
-from sklearn.pipeline import Pipeline
-from sklearn.metrics import confusion_matrix, classification_report
+df = load_data("../../Datasets/tmdb_5000_movies.csv")
 
-import joblib
+X, y = build_features(df)
 
-df = pd.read_csv("../../Datasets/tmdb_5000_movies.csv")
+X_train, X_test, y_train, y_test = split_data(X, y)
 
-df.dropna(inplace=True)
+pipeline = train_model(X_train, y_train)
 
-df["profit"] = df["revenue"] - df["budget"]
-df["is_successful"] = df["profit"] > 0
+evaluate_model(pipeline, X_test, y_test)
 
-X = df[
-    [
-        "budget",
-        "popularity",
-        "runtime",
-    ]
-]
-
-y = df["is_successful"]
-
-(X_train, X_test, y_train, y_test) = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)
-
-scaler = StandardScaler()
-
-# Old manual preprocessing (kept for reference):
-# X_train_scaled = scaler.fit_transform(X_train)
-# X_test_scaled = scaler.fit_transform(X_test)
-
-model = LogisticRegression()
-
-# Old manual training/prediction (kept for reference):
-# model.fit(X_train_scaled, y_train)
-# y_pred = model.predict(X_test_scaled)
-
-# Build a single pipeline to apply scaling + logistic regression.
-model_pipeline = Pipeline(
-    [
-        ("scaler", scaler),  # Standardize numeric features
-        ("classifier", model),  # Train LogisticRegression on scaled data
-    ]
-)
-
-# Train and predict using the pipeline (same features/model settings).
-model_pipeline.fit(X_train, y_train)
-y_pred = model_pipeline.predict(X_test)
-
-# print(model.score(X_test_scaled, y_test))
-# print(confusion_matrix(y_test, y_pred))
-# print(classification_report(y_test, y_pred))
-
-joblib.dump(model_pipeline, "models/movie_success_classification_model_pipeline.pkl")
-# joblib.dump(
-#     model_pipeline.named_steps["scaler"], "models/movie_success_classification_scaler.pkl"
-# )
+save_model(pipeline, "models/movie_success_classification_model_pipeline.pkl")
