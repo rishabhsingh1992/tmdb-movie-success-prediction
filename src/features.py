@@ -2,7 +2,7 @@ def build_features(df):
     df["profit"] = df["revenue"] - df["budget"]
     df["is_successful"] = df["profit"] > 0
 
-    X = df[["budget", "popularity", "runtime"]]
+    X = df[["budget", "popularity", "runtime", "original_language", "genres", "keywords", "production_companies", "production_countries"]]
     y = df["is_successful"]
 
     return X, y

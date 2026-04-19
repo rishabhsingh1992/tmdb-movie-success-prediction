@@ -1,15 +1,15 @@
+from pathlib import Path
+
 from src.data import load_data
 from src.features import build_features
-from src.model import evaluate_model, save_model, split_data, train_model
+from src.model import train_and_evaluate, save_model
 
-df = load_data("../../Datasets/tmdb_5000_movies.csv")
 
+DATASET_PATH = Path("../../Datasets/tmdb_5000_movies.csv")
+MODEL_PATH = Path("models/movie_success_pipeline.pkl")
+
+
+df = load_data(DATASET_PATH)
 X, y = build_features(df)
-
-X_train, X_test, y_train, y_test = split_data(X, y)
-
-pipeline = train_model(X_train, y_train)
-
-evaluate_model(pipeline, X_test, y_test)
-
-save_model(pipeline, "models/movie_success_classification_model_pipeline.pkl")
+pipeline = train_and_evaluate(X, y)
+save_model(pipeline, MODEL_PATH)
